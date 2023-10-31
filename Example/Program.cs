@@ -15,10 +15,10 @@ namespace Examples
             // ThreadExceptionDemo(false);
             // ThreadExceptionDemo(true);
             // GlobalExceptionHandling();
-            ThreadingTestas();
+            ThreadingTests();
         }
 
-        private static void ThreadingTestas()
+        private static void ThreadingTests()
         {
             Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
 
