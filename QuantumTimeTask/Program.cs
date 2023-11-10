@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace FirstTask
+namespace QuantumTimeTask
 {
     [SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы")]
     public static class Program
