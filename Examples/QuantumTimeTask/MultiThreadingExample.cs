@@ -1,12 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
+﻿using System.Diagnostics;
 
-namespace Examples
+namespace Example.QuantumTimeTask
 {
-    public static class Program
+    public static class MultiThreadingExample
     {
-        public static void Main(string[] args)
+        static MultiThreadingExample()
         {
             // ProcessDemo();
             // ProcessAffinity();
