@@ -4,15 +4,15 @@ namespace Example.CustomThreadPool
 {
     public static class CustomThreadPoolExamples
     {
-        public static void Start(string[] args)
+        public static void Start()
         {
             // AutoResetEventDemo();
             // ManualResetEventDemo();
             // PoolingDemo();
             // LiveDemo();
             // PulseWaitDemo();
-            // PulseBeforeWait();
-            ThreadPoolDemo();
+            PulseBeforeWait();
+            // ThreadPoolDemo();
         }
 
         private static void AutoResetEventDemo()
@@ -99,6 +99,7 @@ namespace Example.CustomThreadPool
 
             void Worker()
             {
+                
 
                 while (true)
                 {

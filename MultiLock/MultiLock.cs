@@ -7,13 +7,14 @@ public class MultiLock : IMultiLock, IDisposable
 
     public IDisposable AcquireLock(params string[] keys)
     {
-        var allKeysAreAllowed = false;
+        var allKeysAreAllowed = true;
         try
         {
-            foreach (var key in keys)
-                EnterKey(key);
+            if (keys.Any(key => !TryToEnterKey(key)))
+            {
+                allKeysAreAllowed = false;
+            }
 
-            allKeysAreAllowed = true;
             return this;
         }
         catch (Exception e)
@@ -32,13 +33,18 @@ public class MultiLock : IMultiLock, IDisposable
         }
     }
 
-    private void EnterKey(string key)
+    private bool TryToEnterKey(string key)
     {
         lock (_lockObject)
         {
             if (!_multiLockItems.ContainsKey(key))
                 _multiLockItems.Add(key, new object());
+
+            if (Monitor.IsEntered(_multiLockItems[key])) 
+                return false;
+            
             Monitor.Enter(_multiLockItems[key]);
+            return true;
         }
     }
 

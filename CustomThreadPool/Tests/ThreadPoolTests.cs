@@ -15,7 +15,7 @@ namespace CustomThreadPool
         {
             var name = threadPoolFactory().GetType().Name.Replace("ThreadPool", "", StringComparison.OrdinalIgnoreCase);
 
-            Console.WriteLine($"----------======={name} ThreadPool tests=======----------");
+            Console.WriteLine($"----------======= {name} ThreadPool tests =======----------");
             
             RunTest(LongCalculations);
             RunTest(ShortCalculations);

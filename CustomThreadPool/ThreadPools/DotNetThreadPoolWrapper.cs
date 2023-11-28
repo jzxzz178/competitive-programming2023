@@ -1,7 +1,4 @@
-using System;
-using System.Threading;
-
-namespace CustomThreadPool
+namespace CustomThreadPool.ThreadPools
 {
     public class DotNetThreadPoolWrapper : IThreadPool
     {

@@ -4,28 +4,30 @@ public class Stack<T> : IStack<T>
 {
     private Node<T>? head;
 
-    public Stack()
-    {
-    }
+    public int Count => count;
+
+    private int count;
 
     public void Push(T item)
     {
-        var node = new Node<T>(item);
+        var spinWait = new SpinWait();
+        var node = new Node<T>(value: item, count: head == null ? 0 : head.Count + 1);
         do
         {
+            spinWait.SpinOnce();
             node.Next = head;
         } while (Interlocked.CompareExchange(ref head, node, node.Next) != node.Next);
 
-        var count = Count;
         Interlocked.Increment(ref count);
-        Count = count;
     }
 
-    public bool TryPop(out T? item)
+    public bool TryPop(out T item)
     {
+        var spinWait = new SpinWait();
         Node<T>? topNode;
         do
         {
+            spinWait.SpinOnce();
             topNode = head;
             if (topNode == null)
             {
@@ -34,26 +36,23 @@ public class Stack<T> : IStack<T>
             }
         } while (Interlocked.CompareExchange(ref head, head.Next, topNode) != topNode);
 
-        var count = Count;
         Interlocked.Decrement(ref count);
-        // if (Interlocked.Increment(ref count) > 0)
-        //     Count = count;
 
         item = topNode.Value;
         return true;
     }
-
-    public int Count { get; private set; }
 }
 
 internal class Node<TR>
 {
     public TR Value { get; internal set; }
     public Node<TR>? Next { get; internal set; }
+    public int Count { get; }
 
-    public Node(TR value = default(TR), Node<TR>? next = null)
+    public Node(TR value = default(TR), Node<TR>? next = null, int count = 0)
     {
         Value = value;
         Next = next;
+        Count = count;
     }
 }
