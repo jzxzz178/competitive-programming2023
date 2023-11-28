@@ -3,7 +3,7 @@ namespace CustomThreadPool.ThreadPools;
 public class CustomThreadPool : IThreadPool
 {
     private readonly Queue<Action> _queue = new Queue<Action>();
-    private long _proccesedTaskCount = 0;
+    private long _processedTaskCount = 0;
 
     public CustomThreadPool()
     {
@@ -21,7 +21,7 @@ public class CustomThreadPool : IThreadPool
 
     public long GetTasksProcessedCount()
     {
-        return _proccesedTaskCount;
+        return _processedTaskCount;
     }
 
     private void Worker()
@@ -33,7 +33,7 @@ public class CustomThreadPool : IThreadPool
                 if (_queue.TryDequeue(out var action))
                 {
                     action.Invoke();
-                    Interlocked.Increment(ref _proccesedTaskCount);
+                    Interlocked.Increment(ref _processedTaskCount);
                 }
                 else
                 {
