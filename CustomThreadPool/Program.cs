@@ -6,6 +6,7 @@ namespace CustomThreadPool
     {
         public static void Main(string[] args)
         {
+            // var t = new ThreadPools.CustomThreadPool();
             ThreadPoolTests.Run<ThreadPools.CustomThreadPool>();
         }
     }
