@@ -4,45 +4,44 @@ namespace CustomThreadPool.ThreadPools;
 
 public class CustomThreadPool : IThreadPool
 {
-    private readonly Queue<Action> _queue = new Queue<Action>();
+    private readonly Queue<Action> queue = new();
 
-    private readonly IReadOnlyDictionary<int, WorkStealingQueue<Action>> LocalQueues;
+    private readonly IReadOnlyDictionary<int, WorkStealingQueue<Action>> localQueues;
 
-    private readonly Dictionary<int, WorkStealingQueue<Action>> _tempDict =
-        new Dictionary<int, WorkStealingQueue<Action>>();
+    private readonly Dictionary<int, WorkStealingQueue<Action>> tempDict = new();
 
-    private long _processedTaskCount = 0;
+    private long processedTaskCount;
 
-    public CustomThreadPool()
+    public CustomThreadPool(int concurrencyLevel)
     {
-        StartBckThreads(Worker, 16);
-        LocalQueues = new ReadOnlyDictionary<int, WorkStealingQueue<Action>>(_tempDict);
+        var threads = CreateBckThreads(Worker, concurrencyLevel);
+        localQueues = new ReadOnlyDictionary<int, WorkStealingQueue<Action>>(tempDict);
+        StartAllThreads(threads);
     }
 
+    public CustomThreadPool() : this(Environment.ProcessorCount)
+    {
+    }
 
     public void EnqueueAction(Action action)
     {
-        lock (_queue)
+        lock (queue)
         {
-            _queue.Enqueue(action);
-            // Monitor.Pulse(_queue);
+            queue.Enqueue(action);
         }
     }
 
-    public long GetTasksProcessedCount()
-    {
-        return _processedTaskCount;
-    }
+    public long GetTasksProcessedCount() => processedTaskCount;
 
     private void Worker()
     {
         while (true)
         {
             var action = () => { };
-            if (LocalQueues[Environment.CurrentManagedThreadId].LocalPop(ref action))
+            if (localQueues[Environment.CurrentManagedThreadId].LocalPop(ref action))
             {
                 action.Invoke();
-                Interlocked.Increment(ref _processedTaskCount);
+                Interlocked.Increment(ref processedTaskCount);
             }
 
             if (!TryDequeueFromGeneralQueue())
@@ -54,20 +53,13 @@ public class CustomThreadPool : IThreadPool
 
     private bool TrySteel()
     {
-        // foreach (var threadId in LocalQueues.Keys)
-        // {
-        //     if (threadId == Environment.CurrentManagedThreadId) continue;
-        //     var action = () => { };
-        //     if (!LocalQueues[threadId].TrySteal(ref action)) continue;
-        //     LocalQueues[Environment.CurrentManagedThreadId].LocalPush(action);
-        //     return true;
-        // }
-
-        foreach (var workStealingQueue in LocalQueues)
+        foreach (var threadId in localQueues.Keys)
         {
+            if (threadId == Environment.CurrentManagedThreadId) continue;
             var action = () => { };
-            if (!workStealingQueue.Value.TrySteal(ref action)) continue;
-            LocalQueues[Environment.CurrentManagedThreadId].LocalPush(action);
+            if (!localQueues[threadId].TrySteal(ref action)) continue;
+            localQueues[Environment.CurrentManagedThreadId].LocalPush(action);
+            return true;
         }
 
         return false;
@@ -75,11 +67,11 @@ public class CustomThreadPool : IThreadPool
 
     private bool TryDequeueFromGeneralQueue()
     {
-        lock (_queue)
+        lock (queue)
         {
-            if (_queue.TryDequeue(out var action))
+            if (queue.TryDequeue(out var action))
             {
-                LocalQueues[Environment.CurrentManagedThreadId].LocalPush(action);
+                localQueues[Environment.CurrentManagedThreadId].LocalPush(action);
                 return true;
             }
 
@@ -87,7 +79,7 @@ public class CustomThreadPool : IThreadPool
         }
     }
 
-    private Thread[] StartBckThreads(Action action, int count)
+    private IEnumerable<Thread> CreateBckThreads(Action action, int count)
     {
         return Enumerable.Range(0, count).Select(_ => StartBckThread(action)).ToArray();
     }
@@ -98,9 +90,15 @@ public class CustomThreadPool : IThreadPool
         {
             IsBackground = true
         };
-        _tempDict.Add(thread.ManagedThreadId, new WorkStealingQueue<Action>());
-        thread.Start();
+        tempDict.Add(thread.ManagedThreadId, new WorkStealingQueue<Action>());
+        // thread.Start();
         // Console.WriteLine(thread.ManagedThreadId);
         return thread;
+    }
+
+    private static void StartAllThreads(IEnumerable<Thread> threads)
+    {
+        foreach (var thread in threads)
+            thread.Start();
     }
 }
