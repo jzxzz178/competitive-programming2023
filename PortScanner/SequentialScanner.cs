@@ -1,10 +1,9 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Threading.Tasks;
+using TPL;
 
-namespace TPL
+namespace PortScanner
 {
 	public class SequentialScanner : IPScanner
 	{

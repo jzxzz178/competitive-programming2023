@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
+using TPL;
 
-namespace TPL
+namespace PortScanner
 {
     public static class Program
     {
