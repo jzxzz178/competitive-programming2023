@@ -1,11 +1,10 @@
 using Example.CustomThreadPool;
-using Example.MultiLock;
 
-namespace Examples;
+namespace Example;
 
-public class Program
+public abstract class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         CustomThreadPoolExamples.Start();
     }

@@ -1,5 +1,3 @@
-using Examples;
-
 namespace Example.MultiLock
 {
     public class SynchronizationProgram
