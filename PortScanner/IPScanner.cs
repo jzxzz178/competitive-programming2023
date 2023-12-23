@@ -1,10 +1,9 @@
 using System.Net;
-using System.Threading.Tasks;
 
-namespace TPL
+namespace PortScanner
 {
     public interface IPScanner
     {
-        Task Scan(IPAddress[] ipAdrrs, int[] ports);
+        Task Scan(IPAddress[] ipAddresses, int[] ports);
     }
 }

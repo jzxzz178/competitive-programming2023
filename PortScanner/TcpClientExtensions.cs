@@ -1,8 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 
-namespace TPL
+namespace PortScanner
 {
     public static class TcpClientExtensions
     {

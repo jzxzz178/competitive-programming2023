@@ -1,4 +1,4 @@
-namespace TPL
+namespace PortScanner
 {
     public enum PortStatus
     {

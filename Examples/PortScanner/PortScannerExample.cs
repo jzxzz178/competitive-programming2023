@@ -10,7 +10,7 @@ namespace Example.PortScanner
             // TaskDemo();
             // TaskExceptionDemo();
 
-            // ContinueWithDemo();
+            ContinueWithDemo();
             // ContinueWithTcoDemo();
             // SendMoney();
             // ChildTaskDemo();

@@ -1,15 +1,14 @@
 ﻿using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using TPL;
 
 namespace PortScanner
 {
 	public class SequentialScanner : IPScanner
 	{
-		public Task Scan(IPAddress[] ipAddrs, int[] ports)
+		public Task Scan(IPAddress[] ipAddresses, int[] ports)
 		{
-			foreach(var ipAddr in ipAddrs)
+			foreach(var ipAddr in ipAddresses)
 			{
 				if(PingAddr(ipAddr) != IPStatus.Success)
 					continue;
